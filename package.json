@@ -1,0 +1,62 @@
+{
+    "name": "slack-to-google-chat-webhook-proxy",
+    "version": "1.0.0",
+    "author": {
+        "name": "Christopher Eaton",
+        "url": "https://github.com/chriseaton"
+    },
+    "description": "A simple server that accepts Slack-formatted webhook requests and transforms them into Google Chat webhook requests.",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/chriseaton/slack-to-google-chat-webhook-proxy.git"
+    },
+    "license": "MIT",
+    "keywords": [
+        "slack",
+        "google chat",
+        "gsuite",
+        "webhook"
+    ],
+    "type": "module",
+    "main": "index.js",
+    "engines": {
+        "node": ">=12"
+    },
+    "scripts": {
+        "start": "node index.js",
+        "start-docs": "node cli.js ./docs",
+        "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --verbose --coverage",
+        "test-ci": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --verbose -ci",
+        "lint": "./node_modules/.bin/eslint ./",
+        "docs": "./node_modules/jsdoc/jsdoc.js -c jsdoc.json --readme README.md"
+    },
+    "jest": {
+        "testEnvironment": "node",
+        "testPathIgnorePatterns": [
+            "/node_modules/"
+        ]
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "npm run test && npm run lint"
+        }
+    },
+    "dependencies": {
+        "axios": "^0.21.1",
+        "body-parser": "^1.19.0",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "js-yaml": "^3.14.1"
+    },
+    "optionalDependencies": {},
+    "devDependencies": {
+        "@types/jest": "^26.0.19",
+        "eslint": "^7.16.0",
+        "eslint-plugin-jest": "^24.1.3",
+        "husky": "^4.3.6",
+        "jest": "^26.6.3",
+        "jsdoc": "^3.6.6",
+        "jsdoc-plugin-intersection": "^1.0.4",
+        "tidy-jsdoc": "^1.4.0"
+    }
+}

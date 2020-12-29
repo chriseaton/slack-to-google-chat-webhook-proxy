@@ -1,0 +1,14 @@
+version: "3.8"
+services: 
+    proxy:
+        image: chriseaton/slack-to-google-chat:latest
+        container_name: proxy
+        restart: always
+        volumes:
+            - ./config.yaml:/srv/config.yaml:ro
+        #env_file: [./.env]
+        logging:
+            driver: "json-file"
+            options:
+                max-file: "5"
+                max-size: "10m"

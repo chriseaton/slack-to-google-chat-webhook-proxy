@@ -1,0 +1,12 @@
+FROM node:14 AS build-env
+
+ARG HOST
+ENV HOST $HOST
+ARG PORT
+ENV PORT $PORT
+ARG GOOGLE_CHAT_URL
+ENV GOOGLE_CHAT_URL $GOOGLE_CHAT_URL
+WORKDIR /srv
+COPY . /srv
+RUN npm ci --only=production
+CMD ["index.js"]
