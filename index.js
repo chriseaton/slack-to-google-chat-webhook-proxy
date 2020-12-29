@@ -77,7 +77,6 @@ function handleRequest(req, res, target) {
             if (key === '_') {
                 key = '';
             }
-            console.log(key, scopedTarget);
             app.post('/' + key, (req, res) => {
                 if (scopedTarget) {
                     handleRequest(req, res, scopedTarget);
