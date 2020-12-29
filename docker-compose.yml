@@ -4,6 +4,8 @@ services:
         image: chriseaton/slack-to-google-chat:latest
         container_name: proxy
         restart: always
+        ports:
+          - 8080:8080
         volumes:
             - ./config.yaml:/srv/config.yaml:ro
         #env_file: [./.env]
