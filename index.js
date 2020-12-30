@@ -25,11 +25,70 @@ function handleRequest(req, res, target) {
             let message = {
                 text: req.body.text
             };
-            console.info(`Sent message on "${req.path}" route to channel "${channel || '*'}" endpoint.`);
+            if (req.body.attachments && req.body.attachments.length) {
+                delete message.text;
+                message.cards = [];
+                for (let i = 0; i < req.body.attachments.length; i++) {
+                    let attach = req.body.attachments[i];
+                    let card = {
+                        header: {
+                            title: attach.title || attach.author_name,
+                            subtitle: attach.pretext
+                        },
+                        sections: []
+                    };
+                    if (attach.author_icon || attach.footer_icon) {
+                        card.header.imageUrl = attach.author_icon || attach.footer_icon;
+                        card.header.imageStyle = 'IMAGE';
+                    }
+                    if (attach.fields && attach.fields.length) {
+                        let section = {
+                            widgets: []
+                        };
+                        for (let f of attach.fields) {
+                            section.widgets.push({
+                                keyValue: {
+                                    topLabel: f.title,
+                                    content: f.value
+                                }
+                            });
+                        }
+                        card.sections.push(section);
+                    }
+                    if (attach.title_link || (attach.footer && attach.footer.match(/^http.+/i))) {
+                        card.sections.push({
+                            widgets: [{
+                                buttons: [
+                                    {
+                                        textButton: {
+                                            text: 'VIEW',
+                                            onClick: {
+                                                openLink: {
+                                                    url: attach.title_link || attach.footer
+                                                }
+                                            }
+                                        }
+                                    }
+                                ]
+                            }]
+                        });
+                    }
+                    message.cards.push(card);
+                }
+            }
             //send
+            console.info(`Recieved:\n${JSON.stringify(req.body, null, 4)}`);
+            console.info(`Sending message:\n${JSON.stringify(message, null, 4)}`);
             axios.post(endpoint, message)
-                .then(() => res.status(200).end())
-                .catch((error) => res.status(error.response.status).send(error.response.data));
+                .then(() => {
+                    console.info(`Sent message on "${req.path}" route to channel "${channel || '*'}" endpoint.`);
+                    res.status(200).end();
+                })
+                .catch((error) => {
+                    console.error(`Error response from Google Chat (${error.response.status}):\n${JSON.stringify(error.response.data, null, 4)}`);
+                    res.status(error.response.status).send(error.response.data);
+                });
+
         } else {
             res.status(500).send('500: No endpoints configured on server for this endpoint route.');
         }
@@ -44,13 +103,15 @@ function handleRequest(req, res, target) {
         host: process.env.HOST || '0.0.0.0',
         port: process.env.PORT || 8080,
         defaultEndpoint: process.env.GOOGLE_CHAT_URL,
-        endpoints: null
+        endpoints: null,
+        debug: false
     };
     let config = null;
     if (fs.existsSync('config.yaml')) {
         config = yaml.safeLoad(fs.readFileSync('config.yaml', 'utf8'));
     }
     config = Object.assign(defaultConfig, config);
+    config.debug = (config.debug === 'true');
     console.info(`Slack to Google Chat WebHook Proxy: v.${version}, ${author.url}`);
     //middleware
     app.use(bodyParser.json());

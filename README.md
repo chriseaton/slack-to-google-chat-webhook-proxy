@@ -50,6 +50,7 @@ The following environmental variables are loaded if the values were not found in
 | HOST | String | 0.0.0.0 | The IP address to listen on. Typically this is "0.0.0.0" for unix-based systems and "localhost" for Microsoft Windows. |
 | PORT | Number | 8080 | The port number to listen on for the Slack-formatted webhook request. |
 | GOOGLE_CHAT_URL | String | | The Google Chat webhook URL endpoint to send the transformed request to. |
+| DEBUG | Boolean | false | Enable the output of message data and results to STDOUT. |
 
 # Running
 This project can be run either as a docker container or by simply executing `npm start` to start listening.
